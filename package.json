@@ -11,6 +11,12 @@
     "start": "node ./dist/app.js"
   },
   "dependencies": {
+    "dotenv": "^17.4.2",
+    "grammy": "^1.44.0",
     "nodemon": "^3.1.14"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.3",
+    "typescript": "^6.0.3"
   }
 }
