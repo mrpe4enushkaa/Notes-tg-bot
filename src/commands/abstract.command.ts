@@ -1,7 +1,6 @@
 import { Bot } from "grammy";
 
-export abstract class Command {
+export default abstract class Command {
     constructor(protected bot: Bot) { }
-
-    abstract handle(): void;
+    public abstract handle(): void;
 }
