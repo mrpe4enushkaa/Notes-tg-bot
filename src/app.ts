@@ -1,18 +1,20 @@
-import dotenv from "dotenv";
 import { Bot } from "grammy";
-import { promts } from "./utils/promts";
-import { error } from "node:console";
+import ConfigService from "./config/config.service";
 
-dotenv.config();
+class BotApp {
+    private bot: Bot;
 
-const KEY_BOT = process.env.KEY_BOT;
+    constructor(private readonly token: string) {
+        this.bot = new Bot(token);
+    }
 
-if (!KEY_BOT) {
-    throw error("Not added KEY_BOT\nLine:10");
+    public init(): void {
+        this.bot.start();
+    }
 }
 
-const bot = new Bot(KEY_BOT);
+const config = new ConfigService();
 
-bot.command("start", (ctx) => { ctx.reply(promts.start, { parse_mode: "HTML" }) });
+const bot = new BotApp(config.get("KEY_BOT"));
 
-bot.start();
+bot.init();
