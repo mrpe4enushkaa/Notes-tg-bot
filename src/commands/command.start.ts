@@ -1,5 +1,5 @@
-import { Bot } from "grammy"
-import Command from "./abstract.command"
+import { Bot } from "grammy";
+import Command from "./abstract.command";
 import { promts } from "../utils/promts";
 
 export class StartCommand extends Command {
