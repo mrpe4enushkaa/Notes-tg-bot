@@ -15,7 +15,7 @@ export default class ListCommand extends Command {
             await this.bot.api.sendMessage(ctx.chatId,
                 listOfNotes.length === 0 ?
                     promts.list.empty :
-                    `${promts.list.has}\n${listOfNotes.map((note, index) => `${index + 1}. ${note.text}`)}`,
+                    `${promts.list.has}\n${listOfNotes.map((note, index) => `${index + 1}. ${note.text}\n`).join("")}`,
                 { parse_mode: "HTML" });
         });
     }
