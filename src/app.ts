@@ -6,19 +6,24 @@ import { Model } from "mongoose";
 import MongoService from "./databases/mongo/mongo.service";
 import MongoSchema from "./models/mongo.schema.interface";
 import ListCommand from "./commands/command.list";
+import RedisService from "./databases/redis/redis.service";
 
 class TelegramBot {
     private bot: Bot;
     private mongo: MongoService;
     private schema: Model<MongoSchema>;
+    private redis: RedisService;
     private commands: Array<Command> = [];
 
     constructor(
         private readonly token: string,
-        private readonly urlMongo: string
+        private readonly urlMongo: string,
+        private readonly hostRedis: string,
+        private readonly portRedis: number
     ) {
         this.bot = new Bot(token);
         this.mongo = new MongoService(urlMongo);
+        this.redis = new RedisService(hostRedis, portRedis);
 
         this.schema = this.mongo.createSchema<MongoSchema>("Notes", {
             chatId: { type: Number, required: true },
@@ -38,7 +43,6 @@ class TelegramBot {
     }
 
     private registerCommands(): void {
-        // const properties = [this.bot];
         const commands = [
             StartCommand,
             ListCommand,
@@ -56,6 +60,7 @@ class TelegramBot {
 
     private async connectDatabases(): Promise<void> {
         await this.mongo.connect();
+        this.redis.connect();
     }
 
     public async init(): Promise<void> {
@@ -68,6 +73,11 @@ class TelegramBot {
 
 const config = new ConfigService();
 
-const bot = new TelegramBot(config.get("KEY_BOT"), config.get("MONGO_URL"));
+const bot = new TelegramBot(
+    config.get("KEY_BOT"),
+    config.get("MONGO_URL"),
+    config.get("REDIS_HOST"),
+    Number(config.get("REDIS_PORT"))
+);
 
 bot.init().catch(console.error);

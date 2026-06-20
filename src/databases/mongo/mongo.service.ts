@@ -2,11 +2,7 @@ import mongoose, { Schema, SchemaDefinition, Model, model } from "mongoose";
 import MongoOptions from "./mongo.interface";
 
 export default class MongoService implements MongoOptions {
-    private url: string;
-
-    constructor(url: string) {
-        this.url = url;
-    }
+    constructor(private url: string) { }
 
     public async connect(): Promise<void> {
         console.log("Connecting to Mongo...");
