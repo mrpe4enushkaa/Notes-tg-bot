@@ -5,7 +5,10 @@ import RedisService from "../databases/redis/redis.service";
 import { RedisStates } from "../models/redis.states.enum";
 
 export default abstract class Command {
+    protected time: number = 60 * 1;
+
     constructor(protected bot: Bot, protected schema: Model<MongoSchema>, protected redis: RedisService) { }
+    
     public abstract handle(): void;
 
     //mongo

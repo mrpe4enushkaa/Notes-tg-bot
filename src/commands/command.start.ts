@@ -10,7 +10,6 @@ export default class StartCommand extends Command {
 
     public handle(): void {
         this.bot.command("start", async (ctx) => {
-            console.log(this.schema);
             await this.bot.api.sendMessage(ctx.chatId, promts.start, { parse_mode: "HTML" });
         });
     }

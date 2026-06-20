@@ -7,6 +7,7 @@ import MongoService from "./databases/mongo/mongo.service";
 import MongoSchema from "./models/mongo.schema.interface";
 import ListCommand from "./commands/command.list";
 import RedisService from "./databases/redis/redis.service";
+import CreateCommand from "./commands/command.create";
 
 class TelegramBot {
     private bot: Bot;
@@ -45,7 +46,7 @@ class TelegramBot {
         const commands = [
             StartCommand,
             ListCommand,
-            // CreateCommand,
+            CreateCommand,
             // EditCommand,
             // DeleteCommand
         ];
