@@ -27,7 +27,6 @@ class TelegramBot {
 
         this.schema = this.mongo.createSchema<MongoSchema>("Notes", {
             chatId: { type: Number, required: true },
-            username: { type: String, required: true },
             text: { type: String, required: true }
         });
     }
