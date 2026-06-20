@@ -51,7 +51,7 @@ class TelegramBot {
             // DeleteCommand
         ];
 
-        this.commands = commands.map(Command => new Command(this.bot, this.schema));
+        this.commands = commands.map(Command => new Command(this.bot, this.schema, this.redis));
 
         this.commands.forEach(command => {
             command.handle();

@@ -1,4 +1,4 @@
-export enum States {
+export enum RedisStates {
     "CREATING",
     "EDITING",
     "DELETING"

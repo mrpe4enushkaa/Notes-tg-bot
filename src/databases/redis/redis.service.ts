@@ -18,7 +18,7 @@ export default class RedisService implements RedisOptions {
         this.client.on("error", (error) => { throw new Error(String(error)) });
     }
 
-    public async set(key: string, state: string, time?: number): Promise<void> {
+    public async set(key: string, state: string | number, time?: number): Promise<void> {
         if (time) {
             await this.client.set(key, state, "EX", time);
         } else {
