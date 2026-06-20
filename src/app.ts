@@ -2,13 +2,28 @@ import { Bot } from "grammy";
 import ConfigService from "./config/config.service";
 import Command from "./commands/abstract.command";
 import { StartCommand } from "./commands/command.start";
+import { Model } from "mongoose";
+import MongoService from "./databases/mongo/mongo.service";
+import MongoSchema from "./models/mongo.schema.interface";
 
 class TelegramBot {
     private bot: Bot;
+    private mongo: MongoService;
+    private schema: Model<MongoSchema>;
     private commands: Array<Command> = [];
 
-    constructor(private readonly token: string) {
+    constructor(
+        private readonly token: string,
+        private readonly urlMongo: string
+    ) {
         this.bot = new Bot(token);
+        this.mongo = new MongoService(urlMongo);
+
+        this.schema = this.mongo.createSchema<MongoSchema>("Notes", {
+            chatId: { type: Number, required: true },
+            username: { type: String, required: true },
+            text: { type: String, required: true }
+        });
     }
 
     private listOfCommands(): void {
@@ -31,22 +46,27 @@ class TelegramBot {
             // DeleteCommand
         ];
 
-        this.commands = commands.map(Command => new Command(this.bot));
+        this.commands = commands.map(Command => new Command(this.bot, this.schema));
 
         this.commands.forEach(command => {
             command.handle();
         });
     }
 
-    public init(): void {
+    private async connectDatabases(): Promise<void> {
+        await this.mongo.connect();
+    }
+
+    public async init(): Promise<void> {
         this.listOfCommands();
         this.registerCommands();
-        this.bot.start();
+        await this.connectDatabases();
+        await this.bot.start();
     }
 }
 
 const config = new ConfigService();
 
-const bot = new TelegramBot(config.get("KEY_BOT"));
+const bot = new TelegramBot(config.get("KEY_BOT"), config.get("MONGO_URL"));
 
-bot.init();
+bot.init().catch(console.error);
