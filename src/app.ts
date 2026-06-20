@@ -1,10 +1,11 @@
 import { Bot } from "grammy";
 import ConfigService from "./config/config.service";
 import Command from "./commands/abstract.command";
-import { StartCommand } from "./commands/command.start";
+import StartCommand from "./commands/command.start";
 import { Model } from "mongoose";
 import MongoService from "./databases/mongo/mongo.service";
 import MongoSchema from "./models/mongo.schema.interface";
+import ListCommand from "./commands/command.list";
 
 class TelegramBot {
     private bot: Bot;
@@ -40,7 +41,7 @@ class TelegramBot {
         // const properties = [this.bot];
         const commands = [
             StartCommand,
-            // ListCommand,
+            ListCommand,
             // CreateCommand,
             // EditCommand,
             // DeleteCommand

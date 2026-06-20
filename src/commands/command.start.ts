@@ -4,7 +4,7 @@ import { promts } from "../utils/promts";
 import { Model } from "mongoose";
 import MongoSchema from "../models/mongo.schema.interface";
 
-export class StartCommand extends Command {
+export default class StartCommand extends Command {
     constructor(bot: Bot, schema: Model<MongoSchema>) { super(bot, schema); }
 
     public handle(): void {
