@@ -8,7 +8,7 @@ export default abstract class Command {
     protected time: number = 60 * 1;
 
     constructor(protected bot: Bot, protected schema: Model<MongoSchema>, protected redis: RedisService) { }
-    
+
     public abstract handle(): void;
 
     //mongo
@@ -38,5 +38,31 @@ export default abstract class Command {
 
     protected async deleteState(chatId: number): Promise<void> {
         await this.redis.delete(`waiting-state:${chatId}`);
+    }
+
+    protected async isState(chatId: number): Promise<boolean> {
+        const result = await this.getState(chatId);
+        return result ? true : false;
+    }
+
+    protected async isCommandWithState(chatId: number, messageId: number): Promise<boolean> {
+        if (await this.isState(chatId)) {
+            this.bot.api.deleteMessage(chatId, messageId);
+            return true;
+        }
+
+        return false;
+    }
+
+    protected async setLastMessage(chatId: number, idMessage: number, time?: number): Promise<void> {
+        await this.redis.set(`last-message:${chatId}`, idMessage, time);
+    }
+
+    protected async getLastMessage(chatId: number): Promise<string | null> {
+        return await this.redis.get(`last-message:${chatId}`);
+    }
+
+    protected async deleteLastMessage(chatId: number): Promise<void> {
+        await this.redis.delete(`last-message:${chatId}`);
     }
 }

@@ -8,6 +8,7 @@ import MongoSchema from "./models/mongo.schema.interface";
 import ListCommand from "./commands/command.list";
 import RedisService from "./databases/redis/redis.service";
 import CreateCommand from "./commands/command.create";
+import CallbackCommand from "./commands/command.callback";
 
 class TelegramBot {
     private bot: Bot;
@@ -45,6 +46,7 @@ class TelegramBot {
     private registerCommands(): void {
         const commands = [
             StartCommand,
+            CallbackCommand,
             ListCommand,
             CreateCommand,
             // EditCommand,
@@ -79,5 +81,6 @@ const bot = new TelegramBot(
     config.get("REDIS_HOST"),
     Number(config.get("REDIS_PORT"))
 );
+
 
 bot.init().catch(console.error);
