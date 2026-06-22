@@ -12,6 +12,7 @@ export default class CallbackCommand extends Command {
         this.bot.callbackQuery("cancel", async (ctx) => {
             if (ctx.chatId) {
                 const lastMessageId = await this.getLastMessage(ctx.chatId);
+                
                 await this.bot.api.editMessageText(ctx.chatId, Number(lastMessageId!), promts.cancel.message);
                 await this.deleteState(ctx.chatId);
                 await this.deleteLastMessage(ctx.chatId);

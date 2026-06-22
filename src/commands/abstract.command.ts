@@ -6,18 +6,23 @@ import { RedisStates } from "../models/redis.states.enum";
 
 export default abstract class Command {
     protected time: number = 60 * 1;
+    protected limitNotes: number = 10;
+    protected limitSymbols: number = 200;
 
     constructor(protected bot: Bot, protected schema: Model<MongoSchema>, protected redis: RedisService) { }
 
     public abstract handle(): void;
 
-    //mongo
     protected async addNote(chatId: number, text: string): Promise<void> {
         await this.schema.create({ chatId, text });
     }
 
-    protected async getNote(chatId: number): Promise<Array<string>> {
+    protected async getNotes(chatId: number): Promise<Array<string>> {
         return await this.schema.find({ chatId });
+    }
+
+    protected async getLengthNotes(chatId: number): Promise<boolean> {
+        return (await this.schema.find({ chatId })).length >= this.limitNotes;
     }
 
     // protected async updateNote() { }
@@ -25,8 +30,6 @@ export default abstract class Command {
     protected async deleteNote(chatId: number, text: string): Promise<void> {
         await this.schema.deleteOne({ chatId, text });
     }
-
-    //redis
 
     protected async setState(chatId: number, state: RedisStates, time?: number): Promise<void> {
         await this.redis.set(`waiting-state:${chatId}`, state, time);
@@ -64,5 +67,17 @@ export default abstract class Command {
 
     protected async deleteLastMessage(chatId: number): Promise<void> {
         await this.redis.delete(`last-message:${chatId}`);
+    }
+
+    protected async setLengthText(chatId: number, length: number, time?: number): Promise<void> {
+        await this.redis.set(`length-text:${chatId}`, length, time);
+    }
+
+    protected async getLengthText(chatId: number): Promise<string | null> {
+        return await this.redis.get(`length-text:${chatId}`);
+    }
+
+    protected async deleteLengthText(chatId: number): Promise<void> {
+        await this.redis.delete(`length-text:${chatId}`);
     }
 }
