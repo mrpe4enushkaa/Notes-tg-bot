@@ -12,7 +12,7 @@ export default class ListCommand extends Command {
         this.bot.command("list", async (ctx) => {
             if (await this.isCommandWithState(ctx.chatId, ctx.msg.message_id)) return;
             
-            const listOfNotes = await this.schema.find({ chatId: ctx.chatId });
+            const listOfNotes = await this.getNotes(ctx.chatId);
 
             await this.bot.api.sendMessage(ctx.chatId,
                 listOfNotes.length === 0 ?

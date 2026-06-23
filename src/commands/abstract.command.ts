@@ -1,5 +1,5 @@
 import { Bot } from "grammy";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import MongoSchema from "../models/mongo.schema.interface";
 import RedisService from "../databases/redis/redis.service";
 import { RedisStates } from "../models/redis.states.enum";
@@ -25,8 +25,8 @@ export default abstract class Command {
         return (await this.schema.find({ chatId })).length >= this.limitNotes;
     }
 
-    protected async updateNote(chatId: number, text: string): Promise<void> {
-        await this.schema.updateOne({ chatId }, { $set: { text } });
+    protected async updateNote(_id: Types.ObjectId, chatId: number, text: string): Promise<void> {
+        await this.schema.updateOne({ _id }, { $set: { chatId, text } });
     }
 
     protected async deleteNote(chatId: number, text: string): Promise<void> {

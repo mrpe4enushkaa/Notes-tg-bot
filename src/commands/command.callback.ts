@@ -26,7 +26,7 @@ export default class CallbackCommand extends Command {
                 const index = Number(callbackData.replace("delete_", ""));
 
                 const lastMessageId = await this.getLastMessage(ctx.chatId);
-                const listOfNotes = await this.schema.find({ chatId: ctx.chatId });
+                const listOfNotes = await this.getNotes(ctx.chatId);
 
                 await this.deleteNote(ctx.chatId, listOfNotes[index - 1].text);
 
@@ -41,7 +41,7 @@ export default class CallbackCommand extends Command {
         this.bot.callbackQuery("delete_all", async (ctx) => {
             if (ctx.chatId) {
                 const lastMessageId = await this.getLastMessage(ctx.chatId);
-                const listOfNotes = await this.schema.find({ chatId: ctx.chatId });
+                const listOfNotes = await this.getNotes(ctx.chatId);
 
                 await this.schema.deleteMany({ chatId: ctx.chatId });
 

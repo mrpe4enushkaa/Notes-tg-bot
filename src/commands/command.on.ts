@@ -41,7 +41,7 @@ export default class OnCommand extends Command {
 
                 await this.bot.api.sendMessage(ctx.chatId, promts.edit.edited(Number(index), listOfNotes[Number(index) - 1].text), { parse_mode: "HTML" });
 
-                await this.updateNote(ctx.chatId, ctx.message.text);
+                await this.updateNote(listOfNotes[Number(index) - 1]._id!, ctx.chatId, ctx.message.text);
                 await this.deleteLastMessage(ctx.chatId);
                 await this.deleteState(ctx.chatId);
                 await this.deleteNoteIndex(ctx.chatId);

@@ -14,7 +14,9 @@ export default class EditCommand extends Command {
         this.bot.command("edit", async (ctx) => {
             if (await this.isCommandWithState(ctx.chatId, ctx.msg.message_id)) return;
 
-            const listOfNotes = await this.schema.find({ chatId: ctx.chatId });
+            const listOfNotes = await this.getNotes(ctx.chatId);
+
+            listOfNotes[0]._id
 
             if (listOfNotes.length === 0) {
                 await this.bot.api.sendMessage(ctx.chatId, promts.edit.empty, { parse_mode: "HTML" });
