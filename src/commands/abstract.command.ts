@@ -17,7 +17,7 @@ export default abstract class Command {
         await this.schema.create({ chatId, text });
     }
 
-    protected async getNotes(chatId: number): Promise<Array<string>> {
+    protected async getNotes(chatId: number): Promise<Array<MongoSchema>> {
         return await this.schema.find({ chatId });
     }
 
@@ -25,7 +25,9 @@ export default abstract class Command {
         return (await this.schema.find({ chatId })).length >= this.limitNotes;
     }
 
-    // protected async updateNote() { }
+    protected async updateNote(chatId: number, text: string): Promise<void> {
+        await this.schema.updateOne({ chatId }, { $set: { text } });
+    }
 
     protected async deleteNote(chatId: number, text: string): Promise<void> {
         await this.schema.deleteOne({ chatId, text });
@@ -79,5 +81,17 @@ export default abstract class Command {
 
     protected async deleteLengthText(chatId: number): Promise<void> {
         await this.redis.delete(`length-text:${chatId}`);
+    }
+
+    protected async setNoteIndex(chatId: number, index: number, time?: number): Promise<void> {
+        await this.redis.set(`note-index:${chatId}`, index, time);
+    }
+
+    protected async getNoteIndex(chatId: number): Promise<string | null> {
+        return await this.redis.get(`note-index:${chatId}`);
+    }
+
+    protected async deleteNoteIndex(chatId: number): Promise<void> {
+        await this.redis.delete(`note-index:${chatId}`);
     }
 }

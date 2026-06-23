@@ -10,6 +10,8 @@ import RedisService from "./databases/redis/redis.service";
 import CreateCommand from "./commands/command.create";
 import DeleteCommand from "./commands/command.delete";
 import CallbackCommand from "./commands/command.callback";
+import EditCommand from "./commands/command.edit";
+import OnCommand from "./commands/command.on";
 
 class TelegramBot {
     private bot: Bot;
@@ -48,9 +50,10 @@ class TelegramBot {
         const commands = [
             StartCommand,
             ListCommand,
-            DeleteCommand,
             CreateCommand,
-            // EditCommand,
+            EditCommand,
+            DeleteCommand,
+            OnCommand,
             CallbackCommand
         ];
 

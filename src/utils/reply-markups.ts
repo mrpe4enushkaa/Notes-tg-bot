@@ -27,3 +27,21 @@ export const deleteInlineKeyboard = (listOfNotes: Array<MongoSchema>) => {
 
     return keyboard;
 }
+
+export const editInlineKeyboard = (listOfNotes: Array<MongoSchema>) => {
+    const keyboard = new InlineKeyboard();
+
+    listOfNotes.map((_, index) => {
+        keyboard.text(`${index + 1}`, `edit_${index + 1}`);
+
+        if ((index + 1) % 5 === 0) {
+            keyboard.row();
+        }
+    });
+
+    keyboard
+        .row()
+        .text(promts.cancel.button, "cancel");
+
+    return keyboard;
+}
