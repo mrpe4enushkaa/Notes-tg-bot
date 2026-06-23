@@ -12,6 +12,15 @@ export default class StartCommand extends Command {
         this.bot.command("start", async (ctx) => {
             if (await this.isCommandWithState(ctx.chatId, ctx.msg.message_id)) return;
             await this.bot.api.sendMessage(ctx.chatId, promts.start, { parse_mode: "HTML" });
+            await ctx.reply("Выберите действие:", {
+                reply_markup: {
+                    keyboard: [
+                        ["/list", "/create"],
+                        ["/edit", "/delete"]
+                    ],
+                    resize_keyboard: true
+                }
+            });
         });
     }
 }
