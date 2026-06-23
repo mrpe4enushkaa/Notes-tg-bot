@@ -8,6 +8,7 @@ import MongoSchema from "./models/mongo.schema.interface";
 import ListCommand from "./commands/command.list";
 import RedisService from "./databases/redis/redis.service";
 import CreateCommand from "./commands/command.create";
+import DeleteCommand from "./commands/command.delete";
 import CallbackCommand from "./commands/command.callback";
 
 class TelegramBot {
@@ -35,22 +36,22 @@ class TelegramBot {
 
     private listOfCommands(): void {
         this.bot.api.setMyCommands([
-            { command: "/start", description: "👋 Начать работу" },
-            { command: "/list", description: "📚 Список заметок" },
-            { command: "/create", description: "📝 Создать заметку" },
-            { command: "/edit", description: "✏️ Изменить заметку" },
-            { command: "/delete", description: "🗑️ Удалить заметку" },
+            { command: "start", description: "👋 Начать работу" },
+            { command: "list", description: "📚 Список заметок" },
+            { command: "create", description: "📝 Создать заметку" },
+            { command: "edit", description: "✏️ Изменить заметку" },
+            { command: "delete", description: "🗑️ Удалить заметку" },
         ], { language_code: "ru" });
     }
 
     private registerCommands(): void {
         const commands = [
             StartCommand,
-            CallbackCommand,
             ListCommand,
+            DeleteCommand,
             CreateCommand,
             // EditCommand,
-            // DeleteCommand
+            CallbackCommand
         ];
 
         this.commands = commands.map(Command => new Command(this.bot, this.schema, this.redis));

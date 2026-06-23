@@ -12,8 +12,41 @@ export default class CallbackCommand extends Command {
         this.bot.callbackQuery("cancel", async (ctx) => {
             if (ctx.chatId) {
                 const lastMessageId = await this.getLastMessage(ctx.chatId);
-                
-                await this.bot.api.editMessageText(ctx.chatId, Number(lastMessageId!), promts.cancel.message);
+
+                await this.bot.api.editMessageText(ctx.chatId, Number(lastMessageId!), promts.cancel.message, { parse_mode: "HTML" });
+                await this.deleteState(ctx.chatId);
+                await this.deleteLastMessage(ctx.chatId);
+            }
+        });
+
+        this.bot.callbackQuery(/^delete_\d+$/, async (ctx) => {
+            if (ctx.chatId) {
+                const callbackData = ctx.callbackQuery.data;
+                const index = Number(callbackData.replace("delete_", ""));
+
+                const lastMessageId = await this.getLastMessage(ctx.chatId);
+                const listOfNotes = await this.schema.find({ chatId: ctx.chatId });
+
+                await this.deleteNote(ctx.chatId, listOfNotes[index - 1].text);
+
+                await this.bot.api.editMessageText(ctx.chatId, Number(lastMessageId!), `${promts.delete.has}:\n${listOfNotes.map((note, index) => (`${index + 1}. ${note.text}\n`)).join("")}`, { parse_mode: "HTML" });
+                await this.bot.api.sendMessage(ctx.chatId, promts.delete.deleted(index), { parse_mode: "HTML" });
+
+                await this.deleteState(ctx.chatId);
+                await this.deleteLastMessage(ctx.chatId);
+            }
+        });
+
+        this.bot.callbackQuery("delete_all", async (ctx) => {
+            if (ctx.chatId) {
+                const lastMessageId = await this.getLastMessage(ctx.chatId);
+                const listOfNotes = await this.schema.find({ chatId: ctx.chatId });
+
+                await this.schema.deleteMany({ chatId: ctx.chatId });
+
+                await this.bot.api.editMessageText(ctx.chatId, Number(lastMessageId!), `${promts.delete.has}:\n${listOfNotes.map((note, index) => (`${index + 1}. ${note.text}\n`)).join("")}`, { parse_mode: "HTML" });
+                await this.bot.api.sendMessage(ctx.chatId, promts.delete.deletedAll, { parse_mode: "HTML" });
+
                 await this.deleteState(ctx.chatId);
                 await this.deleteLastMessage(ctx.chatId);
             }

@@ -1,5 +1,5 @@
 export enum RedisStates {
-    "CREATING",
-    "EDITING",
-    "DELETING"
+    "CREATING" = 100,
+    "EDITING" = 200,
+    "DELETING" = 300
 }

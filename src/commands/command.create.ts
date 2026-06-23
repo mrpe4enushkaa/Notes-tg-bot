@@ -1,4 +1,4 @@
-import { Bot, InlineKeyboard } from "grammy";
+import { Bot } from "grammy";
 import Command from "./abstract.command";
 import { Model } from "mongoose";
 import MongoSchema from "../models/mongo.schema.interface";
@@ -27,21 +27,21 @@ export default class CreateCommand extends Command {
         });
 
         this.bot.on("message:text", async (ctx) => {
-            if (await this.isState(ctx.chatId)) {
+            if (Number(await this.getState(ctx.chatId)) === RedisStates.CREATING) {
                 const lastMessageId = await this.getLastMessage(ctx.chatId);
 
                 if (ctx.msg.text.length > this.limitSymbols) {
                     await this.bot.api.deleteMessage(ctx.chatId, ctx.msg.message_id);
 
                     if (Number(await this.getLengthText(ctx.chatId)) !== ctx.msg.text.length) {
-                        await this.bot.api.editMessageText(ctx.chatId, Number(lastMessageId!), promts.create.start(ctx.msg.text.length));
+                        await this.bot.api.editMessageText(ctx.chatId, Number(lastMessageId!), promts.create.start(ctx.msg.text.length), { parse_mode: "HTML" });
                     }
 
                     await this.setLengthText(ctx.chatId, ctx.msg.text.length);
                     return;
                 }
 
-                await this.bot.api.editMessageText(ctx.chatId, Number(lastMessageId!), promts.create.start());
+                await this.bot.api.editMessageText(ctx.chatId, Number(lastMessageId!), promts.create.start(), { parse_mode: "HTML" });
                 await this.bot.api.sendMessage(ctx.chatId, promts.create.end, { parse_mode: "HTML" })
 
                 await this.addNote(ctx.chatId, ctx.msg.text);

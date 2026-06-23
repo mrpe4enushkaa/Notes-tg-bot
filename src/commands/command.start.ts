@@ -10,7 +10,6 @@ export default class StartCommand extends Command {
 
     public handle(): void {
         this.bot.command("start", async (ctx) => {
-            await this.schema.deleteMany({ chatId: ctx.chatId });
             if (await this.isCommandWithState(ctx.chatId, ctx.msg.message_id)) return;
             await this.bot.api.sendMessage(ctx.chatId, promts.start, { parse_mode: "HTML" });
         });
